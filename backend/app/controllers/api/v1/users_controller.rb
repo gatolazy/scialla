@@ -1,11 +1,12 @@
 class Api::V1::UsersController < ApplicationController
 
-  skip_before_action :guard_ensure_token, only: [ :login ]
+  skip_before_action :token_login, only: [ :login ]
 
 
 
+  # Simple auth test.
   def foo
-    render json: { datA: "ok" }
+    render json: { data: @current_user.username }
   end
 
 
@@ -19,7 +20,7 @@ class Api::V1::UsersController < ApplicationController
 
     raise "Invalid credentials" unless @current_user
 
-    render_data( { token: JwtAuth.token_for( @current_user ) } )
+    render_data( { token: @current_user.generate_token } )
   end
 
 end

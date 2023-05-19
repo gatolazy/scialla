@@ -16,7 +16,7 @@ class ApplicationController < ActionController::API
 
 
   # User token checker.
-  before_action :guard_ensure_token, except: [ :not_found ]
+  before_action :token_login, except: [ :not_found ]
 
 
 
@@ -59,22 +59,17 @@ class ApplicationController < ActionController::API
 
 
   # User token checker.
-  def guard_ensure_token
-    # Decode the token:
-    decoded = JwtAuth.decode_token \
+  def token_login
+    # Attempt a login via token:
+    @current_user = User.token_login \
       request
         .headers[ :Authorization ]
-        .to_s
-        .split
-        .last
-        .to_s
-        .gsub /\s/, ""
+        &.split
+        &.last
+        &.gsub /\s/, ""
 
     # It's 404 if the token isn't valid:
-    head 403 and return if decoded.nil?
-
-    # Set the user otherwise:
-    @current_user = User.find_by identifier: decoded[ :i ]
+    head 403 and return if @current_user.nil?
   end
 
 end
