@@ -43,6 +43,9 @@ class User < ApplicationRecord
     # If the token is empty do nothing:
     return nil if token.to_s.blank?
 
+    # Clean token a bit (in case the full header has been given):
+    token = token.split&.last&.gsub /\s/, ""
+
     # Attempt to decode it:
     begin
       decoded = JWT

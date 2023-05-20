@@ -8,12 +8,12 @@ Rails.application.routes.draw do
       cache as: 'v1' do
         # Login:
         post "/login", to: "users#login"
-
-        # Test route
-        get "/foo", to: "users#foo"
       end
     end
   end
+
+  # ActionCable:
+  mount ActionCable.server => "/cable"
 
   # Everything else returns a 404:
   get "/*a", to: "application#not_found"
