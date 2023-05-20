@@ -7,8 +7,8 @@ const WebSocketServer = WebSocket.Server;
 
 // Yes, TLS is required
 const serverConfig = {
-  key: fs.readFileSync('key.pem'),
-  cert: fs.readFileSync('cert.pem'),
+  key: fs.readFileSync('/etc/letsencrypt/live/scialla/privkey.pem'),
+  cert: fs.readFileSync('/etc/letsencrypt/live/scialla/fullchain.pem'),
 };
 
 // ----------------------------------------------------------------------------------------
@@ -18,7 +18,7 @@ const handleRequest = function(request, response) {
   // Render the single client html file for any request the HTTP server receives
   console.log('request received: ' + request.url);
 
-  if(request.url === '/') {
+  if(request.url === '/webrtcdemo') {
     response.writeHead(200, {'Content-Type': 'text/html'});
     response.end(fs.readFileSync('client/index.html'));
   } else if(request.url === '/webrtc.js') {
