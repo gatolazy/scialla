@@ -7,8 +7,11 @@ Rails.application.routes.draw do
         defaults: { format: :json } do
       version 1 do
         cache as: 'v1' do
-          # Login:
+          # User login:
           post "/login", to: "users#login"
+
+          # WebRTC auth:
+          get "/webrtc", to: "webrtc#auth"
         end
       end
     end
