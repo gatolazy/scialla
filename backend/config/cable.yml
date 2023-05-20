@@ -10,5 +10,5 @@ test:
 
 production:
   <<: *redis
-  channel_prefix: fooffa_production
+  channel_prefix: scialla_production
 
