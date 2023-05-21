@@ -7,7 +7,7 @@
 ].each do |u|
   next if User.exists? username: u[ :user ].downcase
 
-  User.create username: u[ :user ].downcase,
+  User.create username: "#{u[ :user ].downcase}@scialla.eu",
     password: "password",
     display_name: u[ :user ],
     department: u[ :department ]

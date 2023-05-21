@@ -16,10 +16,9 @@ gem "redis", "~> 4.0"
 gem "bcrypt", "~> 3.1.7"
 gem "jwt", "~> 2.3.0"
 
-# DB:
-gem "sqlite3", "~> 1.4"
-
 group :development, :test do
+  # DB:
+  gem "sqlite3", "~> 1.4"
   # Use Puma as the app server
   gem "puma", "~> 5.0"
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -39,6 +38,8 @@ group :test do
 end
 
 group :production do
+  # DB
+  gem "mysql2" 
   gem "passenger", ">= 5.0.25", require: "phusion_passenger/rack_handler"
 end
 
