@@ -13,6 +13,7 @@ class Api::V1::UsersController < ApplicationController
     raise "Invalid credentials" unless @current_user
 
     render_data \
+      id: @current_user.id,
       display_name: @current_user.display_name,
       department: @current_user.department,
       token: @current_user.generate_token
