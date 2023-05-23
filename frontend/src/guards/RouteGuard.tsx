@@ -11,7 +11,7 @@ function RouteGuard ({ children, redirectPath = '/login' }: RouteGuardProps)  {
         let flag = false;
 
         //check user has JWT token
-        localStorage.getItem("sciallaToken") ? (flag = true) : (flag = false);
+        localStorage.getItem("_sciallaToken") ? (flag = true) : (flag = false);
 
         return flag;
     }
