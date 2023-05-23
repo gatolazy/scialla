@@ -1,11 +1,5 @@
 class User < ApplicationRecord
 
-  # JWT values:
-  JWT_ALGORITHM = "HS512".freeze
-  JWT_KEY = Rails.application.secrets.secret_key_base
-
-
-
   has_secure_password validations: false
 
 
@@ -13,6 +7,25 @@ class User < ApplicationRecord
   after_initialize if: :new_record? do
     init_identifier
   end
+
+
+
+  #############################################################################
+  ### Constants                                                             ###
+  #############################################################################
+
+  # JWT values:
+  JWT_ALGORITHM = "HS512".freeze
+  JWT_KEY = Rails.application.secrets.secret_key_base
+
+
+
+  #############################################################################
+  ### Relations                                                             ###
+  #############################################################################
+
+  has_many :scores
+  has_many :rooms, through: :scores
 
 
 

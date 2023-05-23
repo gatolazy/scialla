@@ -27,13 +27,6 @@ module Scialla
 
     # Add in the lib path:
     config.autoload_paths << "#{Rails.root}/lib"
-
-    # General game rules:
-    config.game_rules = {
-      min_players: 2,
-      max_players: 3,
-      kredis: "game_rooms"
-    }
   end
 
 end
