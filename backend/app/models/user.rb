@@ -1,11 +1,5 @@
 class User < ApplicationRecord
 
-  # JWT values:
-  JWT_ALGORITHM = "HS512".freeze
-  JWT_KEY = Rails.application.secrets.secret_key_base
-
-
-
   has_secure_password validations: false
 
 
@@ -13,6 +7,25 @@ class User < ApplicationRecord
   after_initialize if: :new_record? do
     init_identifier
   end
+
+
+
+  #############################################################################
+  ### Constants                                                             ###
+  #############################################################################
+
+  # JWT values:
+  JWT_ALGORITHM = "HS512".freeze
+  JWT_KEY = Rails.application.secrets.secret_key_base
+
+
+
+  #############################################################################
+  ### Relations                                                             ###
+  #############################################################################
+
+  has_many :scores
+  has_many :rooms, through: :scores
 
 
 
@@ -42,6 +55,9 @@ class User < ApplicationRecord
   def self.token_login( token )
     # If the token is empty do nothing:
     return nil if token.to_s.blank?
+
+    # Clean token a bit (in case the full header has been given):
+    token = token.split&.last&.gsub /\s/, ""
 
     # Attempt to decode it:
     begin

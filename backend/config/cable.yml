@@ -1,10 +1,14 @@
-development:
-  adapter: async
+redis: &redis
+  adapter: redis
+  url: <%= ENV.fetch( "REDIS_URL" ) { "redis://localhost:6379/1" } %>
+  channel_prefix: <%= "scialla_#{Rails.env}" %>
+
+development: 
+  <<: *redis
 
 test:
   adapter: test
 
 production:
-  adapter: redis
-  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
-  channel_prefix: fooffa_production
+  <<: *redis
+
