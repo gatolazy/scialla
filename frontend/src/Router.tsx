@@ -6,6 +6,7 @@ import RouteGuard from "./guards/RouteGuard";
 import UserContext from "./contexts/UserContext";
 import React from "react";
 import Logout from "./pages/Logout";
+import MimoScenario from "./components/mimoscenario/MimoScenario";
 
 function Router() {
     const { user } = React.useContext(UserContext);
@@ -18,6 +19,7 @@ function Router() {
                 <Route element={<RouteGuard />}>
                     <Route path="/" element={<Home />} />
                     <Route path="profile" element={<Profile />} />
+                    <Route path="mimo" element={<MimoScenario />} />
                     <Route path="logout" element={<Logout />} />
                     <Route
                         path="*"

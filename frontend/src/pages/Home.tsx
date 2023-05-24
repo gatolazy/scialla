@@ -1,5 +1,6 @@
 import { Box } from "@mui/system";
 import Layout from "../layout/Layout";
+import ScenarioCard from "../components/scenariocard/ScenarioCard";
 
 function Home() {
     return (
@@ -13,6 +14,7 @@ function Home() {
                 }}
             >
                 <h1>Scenari</h1>
+                <ScenarioCard></ScenarioCard>
             </Box>
         </Layout>
     );
