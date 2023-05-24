@@ -6,11 +6,9 @@ class ApplicationController < ActionController::API
 
   # Simple "all-for-one" error catcher.
   rescue_from "StandardError" do |e|
-    # Error to send:
     error = { message: e.message, type: e.class }
     error[ :trace ] = e.backtrace unless Rails.env.production?
-
-    render_error error
+    render_error **error
   end
 
 
@@ -36,19 +34,16 @@ class ApplicationController < ActionController::API
   #############################################################################
 
   # Simple response data wrapper.
-  def render_data( data, meta: {}, status: 200 )
+  def render_data( status: 200, **data )
     render \
       status: status,
-      json: {
-        data: data,
-        meta: meta
-      }
+      json: { data: data }
   end
 
 
 
   # Simple error data wrapper.
-  def render_error( data, status: 500 )
+  def render_error( status: 500, **data )
     render \
       status: status,
       json: {
@@ -61,12 +56,7 @@ class ApplicationController < ActionController::API
   # User token checker.
   def token_login
     # Attempt a login via token:
-    @current_user = User.token_login \
-      request
-        .headers[ :Authorization ]
-        &.split
-        &.last
-        &.gsub /\s/, ""
+    @current_user = User.token_login request.headers[ :Authorization ]
 
     # It's 404 if the token isn't valid:
     head 403 and return if @current_user.nil?

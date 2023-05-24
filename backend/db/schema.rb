@@ -10,14 +10,44 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_18_134905) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_22_090416) do
+  create_table "activities", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "description"
+    t.integer "min_players"
+    t.integer "max_players"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_activities_on_name", unique: true
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.string "text"
+  end
+
+  create_table "rooms", force: :cascade do |t|
+    t.integer "activity_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "scores", primary_key: "sid", id: :string, force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "room_id", null: false
+    t.integer "score", default: 0
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "username", null: false
+    t.string "display_name"
+    t.string "department"
     t.string "identifier", limit: 32
     t.string "password_digest", null: false
     t.datetime "last_login_at", precision: nil
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "total_activities", default: 0
+    t.bigint "total_score", default: 0
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 

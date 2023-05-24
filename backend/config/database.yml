@@ -22,4 +22,10 @@ test:
 
 production:
   <<: *default
-  database: db/production.sqlite3
+  adapter: mysql2
+  socket: /var/run/mysqld/mysqld.sock
+  encoding: utf8
+  database: <%= Rails.application.secrets[ :db_name ] %>
+  username: <%= Rails.application.secrets[ :db_user ] %>
+  password: <%= Rails.application.secrets[ :db_pass ] %>
+

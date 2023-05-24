@@ -18,7 +18,17 @@ function pageReady() {
   localVideo = document.getElementById('localVideo');
   remoteVideo = document.getElementById('remoteVideo');
 
-  serverConnection = new WebSocket('wss://' + window.location.hostname + ':8443');
+  // Pick params from the url:
+  const params = new Proxy(
+    new URLSearchParams(window.location.search ),
+    {
+      get: (searchParams, prop) => searchParams.get( prop ),
+    }
+  );
+
+  serverConnection = new WebSocket(
+    `wss://${window.location.hostname}:${window.location.port}/webrtc?t=${params.t}`
+  );
   serverConnection.onmessage = gotMessageFromServer;
 
   var constraints = {
