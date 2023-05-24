@@ -24,11 +24,8 @@ services:
   cache:
     image: redis:6.2-alpine
     restart: always
-    ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    # volumes: 
-    #   - cache:/data
+    command: redis-server --save 20 1 --loglevel warning
+    network_mode: "host"
 
   backend:
     build:
@@ -47,6 +44,7 @@ services:
       DB_USER: user
       DB_PASSWORD: password
       DB_NAME: db
+      REDIS_URL: 'redis://127.0.0.1:6379/0'
       REDIS_HOST: cache
       REDIS_PORT: 6379
       REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
@@ -75,6 +73,7 @@ services:
       PORT: 3000
       REACT_APP_BACKEND_API_BASE_URL: 'http://localhost:37037'
       REACT_APP_WEBRTC_BASE_URL: 'http://localhost:37443'
+      REACT_APP_WSS_API_BASE_URL: 'ws://localhost:37037'
     command: npm run start
     network_mode: "host"
 
@@ -90,6 +89,7 @@ services:
       PORT: 37038
       REACT_APP_BACKEND_API_BASE_URL: 'http://localhost:37037'
       REACT_APP_WEBRTC_BASE_URL: 'http://localhost:37443'
+      REACT_APP_WSS_API_BASE_URL: 'ws://localhost:37037'
     command: tail -F anything
     network_mode: "host"
     volumes:

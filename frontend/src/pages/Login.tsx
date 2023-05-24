@@ -24,7 +24,7 @@ function Login() {
         const credentials: Credentials = { email, password };
         const resp = await signin(credentials);
         setUser(resp);
-        navigate("/profile");
+        navigate("/");
     };
 
     return (
