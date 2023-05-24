@@ -1,5 +1,3 @@
-const HTTPS_PORT = 8443;
-
 const fs = require('fs');
 const https = require('https');
 const WebSocket = require('ws');
@@ -44,6 +42,7 @@ const handleRequest = function(request, response) {
   }
 };
 
+const HTTPS_PORT = process.env.HTTPS_PORT;
 const httpsServer = https.createServer(serverConfig, handleRequest);
 httpsServer.listen(HTTPS_PORT, '0.0.0.0');
 

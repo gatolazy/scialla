@@ -1,5 +1,6 @@
 version: '3.3'
 services:
+
   db:
     image: mysql
     restart: always
@@ -15,47 +16,81 @@ services:
       # <Port exposed> : <MySQL Port running inside container>
       - '3337:3306'
     expose:
-      # Opens port 3306 on the container
       - '3337'
       # Where our data will be persisted
-    volumes:
-      - my-db:/var/lib/mysql
+    # volumes:
+    #   - my-db:/var/lib/mysql
 
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    # volumes: 
+    #   - cache:/data
 
   backend:
     build:
-        context: ./
-        dockerfile: ./development/ruby.Dockerfile
+        context: ../backend
+        dockerfile: ./docker/Dockerfile
+    depends_on:
+      - db
+      - cache
     working_dir: /usr/src/app
-    command: tail -F anything
     network_mode: "host"
-    #environment:
-      # MYSQL_DATABASE: 'db'
-    volumes:
-      - ../backend:/usr/src/app
+    environment:
+      RAILS_ENV: development
+      PORT: 37037
+      DB_HOST: db
+      DB_PORT: 3337
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: db
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
 
   webrtc-server:
     build:
-        context: ./
-        dockerfile: ./development/node.Dockerfile
+        context: ../webrtc-server
+        dockerfile: ./docker/Dockerfile
+    depends_on:
+      - backend
     working_dir: /app
-    command: tail -F anything
+    environment:
+      NODE_ENV: development
+      HTTPS_PORT: 37443
     network_mode: "host"
-    volumes:
-      - ../webrtc-server:/app
 
   frontend:
     build:
-        context: ./
-        dockerfile: ./development/node.Dockerfile
+        context: ../frontend
+        dockerfile: ./docker/Dockerfile
+    depends_on:
+      - webrtc-server
     working_dir: /app
-    # environment:
-    #   REACT_APP_BACKEND_API_BASE_URL: 'https://scialla.eu'
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      REACT_APP_BACKEND_API_BASE_URL: 'http://localhost:37037'
+      REACT_APP_WEBRTC_BASE_URL: 'http://localhost:37443'
+    command: npm run start
+    network_mode: "host"
+
+  frontend-dev:
+    build:
+        context: ../frontend
+        dockerfile: ./docker/Dockerfile.development
+    depends_on:
+      - frontend
+    working_dir: /app
+    environment:
+      NODE_ENV: development
+      PORT: 37038
+      REACT_APP_BACKEND_API_BASE_URL: 'http://localhost:37037'
+      REACT_APP_WEBRTC_BASE_URL: 'http://localhost:37443'
     command: tail -F anything
     network_mode: "host"
     volumes:
       - ../frontend:/app
-
-# Names our volume
-volumes:
-  my-db:

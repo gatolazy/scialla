@@ -3,9 +3,9 @@ import API_ROUTES from "../enums/ApiRoutes";
 import Credentials from "../models/Credentials";
 
 if (process.env.REACT_APP_BACKEND_API_BASE_URL) {
-    console.log(process.env.REACT_APP_BACKEND_API_BASE_URL);
     axios.defaults.baseURL =
         process.env.REACT_APP_BACKEND_API_BASE_URL + "/api";
+    console.log({backend: axios.defaults.baseURL});
 }
 
 function _setToken(token: string) {
