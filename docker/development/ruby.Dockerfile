@@ -11,8 +11,9 @@ RUN apk update && apk add --virtual build-dependencies build-base \
  git\
  tzdata
 
-# COPY Gemfile Gemfile.lock ./
-# RUN bundle install
+WORKDIR /usr/src/app
+COPY Gemfile* ./
+RUN bundle install
 
 #COPY . .
 
