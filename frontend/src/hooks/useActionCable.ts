@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { createConsumer } from '@rails/actioncable'
 
 export default function useActionCable(url) {
