@@ -1,26 +1,6 @@
 version: '3.3'
 services:
 
-  db:
-    image: mysql
-    restart: always
-    environment:
-      MYSQL_DATABASE: 'db'
-      # So you don't have to use root, but you can if you like
-      MYSQL_USER: 'user'
-      # You can use whatever password you like
-      MYSQL_PASSWORD: 'password'
-      # Password for root access
-      MYSQL_ROOT_PASSWORD: 'password'
-    ports:
-      # <Port exposed> : <MySQL Port running inside container>
-      - '3337:3306'
-    expose:
-      - '3337'
-      # Where our data will be persisted
-    # volumes:
-    #   - my-db:/var/lib/mysql
-
   cache:
     image: redis:6.2-alpine
     restart: always
@@ -32,7 +12,6 @@ services:
         context: ../backend
         dockerfile: ./docker/Dockerfile
     depends_on:
-      - db
       - cache
     working_dir: /usr/src/app
     network_mode: "host"
@@ -72,7 +51,7 @@ services:
       NODE_ENV: development
       PORT: 3000
       REACT_APP_BACKEND_API_BASE_URL: 'http://localhost:37037'
-      REACT_APP_WEBRTC_BASE_URL: 'http://localhost:37443'
+      REACT_APP_WEBRTC_WS_URL: 'wss://localhost:37443'
       REACT_APP_WSS_API_BASE_URL: 'ws://localhost:37037'
     command: npm run start
     network_mode: "host"
@@ -88,7 +67,7 @@ services:
       NODE_ENV: development
       PORT: 37038
       REACT_APP_BACKEND_API_BASE_URL: 'http://localhost:37037'
-      REACT_APP_WEBRTC_BASE_URL: 'http://localhost:37443'
+      REACT_APP_WEBRTC_WS_URL: 'wss://localhost:37443'
       REACT_APP_WSS_API_BASE_URL: 'ws://localhost:37037'
     command: tail -F anything
     network_mode: "host"

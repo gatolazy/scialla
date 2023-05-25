@@ -12,3 +12,8 @@ Email disponibili:
 
 Password uguale per tutti: 'password'
 
+
+## Start game 
+````bash
+ ./bin/rake activities:start
+````

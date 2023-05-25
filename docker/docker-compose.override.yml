@@ -1,0 +1,81 @@
+version: '3.3'
+services:
+
+    cache:
+        image: redis:6.2-alpine
+        restart: always
+        command: redis-server --save 20 1 --loglevel warning
+        #network_mode: "host"
+        ports:
+            - "6379:6379"
+
+    backend:
+        build:
+            context: ../backend
+            dockerfile: ./docker/Dockerfile
+        depends_on:
+            - cache
+        working_dir: /usr/src/app
+        #network_mode: "host"
+        environment:
+            RAILS_ENV: development
+            PORT: 37037
+            REDIS_URL: 'redis://cache:6379/0'
+
+    webrtc-server:
+        build:
+            context: ../webrtc-server
+            dockerfile: ./docker/Dockerfile
+        depends_on:
+            - backend
+        working_dir: /app
+        environment:
+            NODE_ENV: development
+            HTTPS_PORT: 37443
+        network_mode: "host"
+
+    frontend:
+        build:
+            context: ../frontend
+            dockerfile: ./docker/Dockerfile
+        depends_on:
+            - webrtc-server
+        working_dir: /app
+        environment:
+            NODE_ENV: development
+            PORT: 3000
+            REACT_APP_BACKEND_API_BASE_URL: 'http://localhost:37037'
+            REACT_APP_WEBRTC_WS_URL: 'wss://localhost:37443'
+            REACT_APP_WSS_API_BASE_URL: 'ws://localhost:37037'
+        command: npm run start
+        network_mode: "host"
+
+    frontend-dev:
+        build:
+            context: ../frontend
+            dockerfile: ./docker/Dockerfile.development
+        depends_on:
+            - frontend
+        working_dir: /app
+        ports:
+            - "37038:37038"
+        environment:
+            NODE_ENV: development
+            PORT: 37038
+            REACT_APP_BACKEND_API_BASE_URL: 'http://localhost:37037'
+            REACT_APP_WEBRTC_WS_URL: 'wss://localhost:37443'
+            REACT_APP_WSS_API_BASE_URL: 'ws://localhost:37037'
+        command: tail -F anything
+        volumes:
+            - ../frontend:/app
+
+    reverse:
+        container_name: reverse
+        hostname: reverse
+        image: nginx
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - <percorso/alla/tua/configurazione>:/etc/nginx
+            - <percorso/ai/tuoi/certificati>:/etc/ssl/private
