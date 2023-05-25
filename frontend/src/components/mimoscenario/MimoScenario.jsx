@@ -1,19 +1,37 @@
 import { Box } from "@mui/system";
 import Layout from '../../layout/Layout';
-import { getConsumer } from "../../services/WS";
+import { useEffect, useState } from "react";
+import useActionCable from '../../hooks/useActionCable';
+import useChannel from '../../hooks/useChannel';
 
 function MimoScenario() {
+    const token = localStorage.getItem("_sciallaToken");
+    const wssUrl = process.env.REACT_APP_WSS_API_BASE_URL + '/api/cable?t=' + token;
+    const { actionCable } = useActionCable(wssUrl);
+    const { subscribe, unsubscribe } = useChannel(actionCable);
+    const [data, setData] = useState(null);
 
-    const consumer = getConsumer();
-    consumer.subscriptions.create(
-        {channel: 'LobbyChannel'},
-        {
-            connected: ()=> {console.log('connected')},
-            disconnected: ()=> {console.log('disconnected')},
-            received: (data)=> { console.log(data);}
 
+    const mimoBL = (mimoMsg) => {
+        console.log({ mimoMsg });
+        setData(mimoMsg);
+    }
+
+    useEffect(() => {
+        subscribe({ channel: 'LobbyChannel' }, {
+            received: (mimoRoomId) => {
+                unsubscribe();
+                subscribe({ channel: mimoRoomId }, {
+                    received: mimoBL
+                })
+            }
+        });
+        return () => {
+            unsubscribe()
         }
-    );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
 
     return (
         <Layout>
@@ -26,6 +44,7 @@ function MimoScenario() {
                 }}
             >
                 <h1>Mimo</h1>
+                {data}
             </Box>
         </Layout>
     );
