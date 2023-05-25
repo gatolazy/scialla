@@ -11,6 +11,7 @@ function Logout() {
         signout();
         setUser(null);
         navigate('/login');
+        localStorage.removeItem("_mimoRoomId");
     }, []);
     return (<></>);
 }
